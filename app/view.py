@@ -92,13 +92,17 @@ def scan_ticket():
     ticket_num = request.json.get("ticketNumber")
 
     audience = Audience.query.filter(Audience.id == ticket_num).first()
+    checkout = Checkout.query.filter(Checkout.audience_id == ticket_num).first()
     if not audience:
-        return jsonify({"code": "1", "type": "ticket"})
+        return jsonify({"code": "1", "type": "ticket not found"})
+
+    if checkout:
+        return jsonify({"code": "1", "type": "ticket already redeemed"})
 
     checkout_object = Checkout(audience.id)
     add_to_database(checkout_object)
 
-    return jsonify({"code": "0", "type": "checkout", "name": audience.name})
+    return jsonify({"code": "0", "type": "checkout successful", "name": audience.name})
 
 @app.route("/audiences", methods=["GET"])
 @jwt_required
