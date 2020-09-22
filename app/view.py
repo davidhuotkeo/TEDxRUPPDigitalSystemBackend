@@ -131,15 +131,14 @@ def list_all_audience():
     }
     """
     data = []
-    audiences = Audience.query.all()
-    all_redeem = Checkout.query.all()
-    for audience in audiences:
-        row = {}
-        checkout = Checkout.query.filter(Checkout.audience_id == audience.id).first()
-        row["name"] = audience.name
-        if checkout:
-            row["redeem"] = True
-        else:
-            row["redeem"] = False
-        data.append(row)
-    return jsonify({"data": data, "redeem": len(all_redeem), "total": len(audiences)})
+    checkouts = Checkout.query.all()
+    for checkout in checkouts:
+        audience_id = checkout.audience_id
+        audience = Audience.query.filter(Audience.id == audience_id).first()
+        print(audience)
+
+        checkout_time = checkout.date.strftime("%I:%M:%S")
+
+        data.append([audience.name, checkout_time])
+
+    return jsonify({"data": data})
