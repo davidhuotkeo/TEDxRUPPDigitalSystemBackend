@@ -97,7 +97,7 @@ def scan_ticket():
         return jsonify({"code": "1", "type": "ticket not found"})
 
     if checkout:
-        return jsonify({"code": "1", "type": "ticket already redeemed"})
+        return jsonify({"code": "1", "type": "ticket already redeemed", "name": audience.name})
 
     checkout_object = Checkout(audience.id)
     add_to_database(checkout_object)
@@ -135,7 +135,6 @@ def list_all_audience():
     for checkout in checkouts:
         audience_id = checkout.audience_id
         audience = Audience.query.filter(Audience.id == audience_id).first()
-        print(audience)
 
         checkout_time = checkout.date.strftime("%I:%M:%S")
 
