@@ -9,6 +9,7 @@ class BaseConfig:
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:Davidhuotkeo123@localhost/tedxruppticket"
 
 class ProductionConfig(BaseConfig):
     DEBUG = False
