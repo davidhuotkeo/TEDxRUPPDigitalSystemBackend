@@ -10,6 +10,10 @@ from flask import (
 # GET THE CODE STATUS DETAIL
 from app.data.code import code_status
 
+import pandas as pd
+
+from uuid import uuid4
+
 # CONTROLLERS
 from app.control import (
     jwt_required, 
@@ -66,11 +70,26 @@ def upload():
     """
     file = request.files["data"]
     stream_data = file.stream
-    data, data_obj = unwrap_csv(stream_data)
+    
+    website_ticket = "https://tedxrupp.web.app"
+
+    df = pd.read_csv(stream_data)
+    _name = df["name"].values
+    _id = [str(uuid4()).upper()[:7] for i in range(len(_name))]
+
     audiences = []
-    for (_id, _name) in data:
-        audiences.append(Audience(_id, _name))
+    _tickets = []
+    for i in range(len(_id)):
+        audiences.append(Audience(_id[i], _name[i]))
+        _tickets.append(website_ticket + f"/{_id[i]}")
     add_to_database(audiences, multiple=True)
+
+    df["ticket"] = _tickets
+    df["id"] = _id
+
+    df.to_csv("./files/CircleAudiences.csv")
+    data_obj = df.set_index("id").to_dict()
+
     return {"code": "0", "data": data_obj}
 
 @app.route("/scan", methods=["POST"])

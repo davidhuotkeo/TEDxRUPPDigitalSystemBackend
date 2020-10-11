@@ -14,5 +14,5 @@ from app.model import database
 from app.model.database import Audience, Checkout
 
 from configuration import configs
-env = "default"
+env = "dev"
 app.config.from_object(configs[env])
