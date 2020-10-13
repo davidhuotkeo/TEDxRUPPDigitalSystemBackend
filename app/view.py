@@ -68,14 +68,19 @@ def upload():
 
     This will be used in SERVER side only
     """
+    upload_old_file = False
     file = request.files["data"]
     stream_data = file.stream
     
-    website_ticket = "https://tedxrupp.web.app"
+    website_ticket = "https://tedxruppticket.web.app/"
 
     df = pd.read_csv(stream_data)
     _name = df["name"].values
     _id = [str(uuid4()).upper()[:7] for i in range(len(_name))]
+
+    if "id" in df.columns:
+        upload_old_file = True
+        _id = df["id"].values
 
     audiences = []
     _tickets = []
@@ -84,10 +89,11 @@ def upload():
         _tickets.append(website_ticket + f"/{_id[i]}")
     add_to_database(audiences, multiple=True)
 
-    df["ticket"] = _tickets
-    df["id"] = _id
+    if not upload_old_file:
+        df["ticket"] = _tickets
+        df["id"] = _id
 
-    df.to_csv("./files/CircleAudiences.csv")
+        df.to_csv("./files/CircleAudiences.csv")
     data_obj = df.set_index("id").to_dict()
 
     return {"code": "0", "data": data_obj}
