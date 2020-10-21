@@ -75,8 +75,29 @@ def upload():
     website_ticket = "https://tedxruppticket.web.app/"
 
     df = pd.read_csv(stream_data)
-    _name = df["name"].values
-    _id = [str(uuid4()).upper()[:7] for i in range(len(_name))]
+    name = df["name"].values
+
+    if "id" in df.columns:
+        _id = df["id"].values
+        _name = df["name"].values
+        
+        audiences = []
+        for i in range(len(_id)):
+            audiences.append(Audience(_id[i], _name[i]))
+        add_to_database(audiences, multiple=True)
+
+        return jsonify({"data": "added"})
+
+    tickets = df["Ticket"].values
+    ticket_num = df["Ticket"].values.sum()
+    
+    _name = []
+    for i, n in enumerate(tickets):
+        for j in range(n):
+            print()
+            _name.append(name[i])
+
+    _id = [str(uuid4()).upper()[:7] for i in range(ticket_num)]
 
     if "id" in df.columns:
         upload_old_file = True
@@ -86,15 +107,17 @@ def upload():
     _tickets = []
     for i in range(len(_id)):
         audiences.append(Audience(_id[i], _name[i]))
-        _tickets.append(website_ticket + f"/{_id[i]}")
+        _tickets.append(website_ticket + f"{_id[i]}")
     add_to_database(audiences, multiple=True)
 
-    if not upload_old_file:
-        df["ticket"] = _tickets
-        df["id"] = _id
+    output_dataframe = pd.DataFrame(data={
+        "id": _id,
+        "name": _name,
+        "ticket_url": _tickets
+    })
 
-        df.to_csv("./files/CircleAudiences.csv")
-    data_obj = df.set_index("id").to_dict()
+    output_dataframe.to_csv("./files/CircleAudiences.csv")
+    data_obj = output_dataframe.set_index("id").to_dict()
 
     return {"code": "0", "data": data_obj}
 

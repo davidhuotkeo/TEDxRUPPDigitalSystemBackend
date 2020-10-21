@@ -8,10 +8,10 @@ class BaseConfig:
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:Davidhuotkeo123@localhost/ticket"
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:Davidhuotkeo123@localhost/tedcircletest"
 
 class ProductionConfig(BaseConfig):
-    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:Davidhuotkeo123@localhost/tedxruppticket"
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:Davidhuotkeo123@localhost/tedcircle"
 
 configs = {
     "default": BaseConfig,
